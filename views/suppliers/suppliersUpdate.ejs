@@ -1,0 +1,66 @@
+<div class="modal-lg" role="dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Update Suppliers</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <!-- Form -->
+        <form action="suppliersUpdatePost" method="post">
+            <div class="modal-body">
+                <!-- Target ID Value to Update -->
+                <input class="d-none" type="text" name=".ID" value="<%= data.values.SuppliersID %>" />
+
+                <!-- Values -->
+                <div class="container">
+                    <!-- data.values --> 
+                    <div class="row align-items-start">
+                        <!-- Sol Sütün -->
+                        <div class="col-6">
+                            <label for="SuppliersName">Suppliers Name:</label><br>
+                            <input class="w-100" type="text" id="SuppliersName" name="SuppliersName" value="<%= data.values.SuppliersName %>"><br>
+                            <label for="SuppliersPhone">Suppliers Phone:</label><br>
+                            <input class="w-100" type="tel" id="SuppliersPhone" name="SuppliersPhone" value="<%= data.values.SuppliersPhone %>"><br>
+                            <label for="SuppliersAddress">Address:</label><br>
+                            <input class="w-100" type="text" id="SuppliersAddress" name="SuppliersAddress" value="<%= data.values.SuppliersAddress %>"><br>
+                            <label for="SuppliersIBAN">IBAN:</label><br>
+                            <input class="w-100" type="text" id="SuppliersIBAN" name="SuppliersIBAN" value="<%= data.values.SuppliersIBAN %>"><br>
+                        </div>
+
+                        <!-- Sağ Sütün -->
+                        <div class="col-6">
+                            <label for="SuppliersTax">Tax:</label><br>
+                            <input class="w-100" type="text" id="SuppliersTax" name="SuppliersTax" value="<%= data.values.SuppliersTax %>"><br>
+                            <label for="SuppliersVDI">VDI:</label><br>
+                            <input class="w-100" type="text" id="SuppliersVDI" name="SuppliersVDI" value="<%= data.values.SuppliersVDI %>"><br>
+                            <label for="SuppliersAlertLimit">Alert Limit:</label><br>
+                            <input class="w-100" type="text" id="SuppliersAlertLimit" name="SuppliersAlertLimit" value="<%= data.values.SuppliersAlertLimit %>"><br>
+                            <label for="SuppliersCreatedDate">Created Date:</label><br>
+                            <input class="w-100" type="date" min="1753-01-01" id="SuppliersCreatedDate" name="SuppliersCreatedDate" value="<%= sqlDate2ISODate(data.values.SuppliersCreatedDate, true) %>"><br>
+                        </div>
+                        
+                        <div class="col-12" style="margin-top: 12px;">
+                            <label for="SuppliersOrderStatusID">Order Status:</label><br>
+                            <select class="w-100" aria-label="Select order status ID" id="SuppliersOrderStatusID" name="SuppliersOrderStatusID">
+                                <% for (let i = 0; i < data.fkValues["SuppliersOrderStatusID"].length; i++) { %>
+                                    <option
+                                        value="<%= data.fkValues["SuppliersOrderStatusID"][i].value %>"
+                                        <%= data.fkValues["SuppliersOrderStatusID"][i].value === data.values.SuppliersOrderStatusID ? "selected" : "" %>
+                                    >
+                                        <%= data.fkValues["SuppliersOrderStatusID"][i].displayValue %>
+                                    </option>
+                                <% } %>
+                            </select><br>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <input type="button" value="Close" class="btn btn-secondary" data-dismiss="modal" />
+                <input type="submit" value="Submit" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>

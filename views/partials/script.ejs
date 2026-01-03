@@ -1,0 +1,289 @@
+<%# Contains general scripts. %>
+
+        <script src="/vendors/jquery/dist/jquery.min.js"></script>
+        <script src="/vendors/popper.js/dist/umd/popper.min.js"></script>
+        <script src="/vendors/bootstrap/dist/js/bootstrap.min.js"></script>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+        <script src="/assets/js/main.js"></script>
+
+        <script>
+            let url = window.location.pathname.replaceAll('/', '')
+            $(document).on("click", '[action="update"]', function (e) {
+                $.ajax({
+                    url: "/" + url + "Update",
+                    type: "GET",
+                    data: {
+                        ID: e.currentTarget.id,
+                    },
+                    success: function (data) {
+                        $(".modal-content").html(data)
+                            .find("[data-dismiss]").each((_, elem) => {
+                                elem.addEventListener("click", () => {
+                                    $("#largeModal").modal("hide");
+                                });
+                            });
+
+                        $("#largeModal").modal("show");
+                    },
+                    error: function (error) {
+                        console.error(error);
+                    },
+                });
+            });
+
+            $(document).on("click", '[action="delete"]', function (e) {
+                Swal.fire({
+                    title: "Veri silinecek !",
+                    text: "Veri silmek istediğinize emin misiniz ?",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    cancelButtonText: "Vazgeç",
+                    confirmButtonText: "Evet"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "/" + url + 'DeletePost',
+                            type: "POST",
+                            data: {
+                                ID: e.target.id,
+                            },
+                            success: function (data) {
+                                $('#' + e.target.id).remove()
+                                Swal.fire({
+                                    position: "top-end",
+                                    icon: "success",
+                                    title: "İşlem Başarılı",
+                                    showConfirmButton: false,
+                                });
+                            },
+                            error: function (error) {
+                                Swal.fire({
+                                    position: "top-end",
+                                    icon: "error",
+                                    title: "İşlem Başarısız",
+                                    showConfirmButton: false,
+                                    timer: 1500,
+                                });
+                            },
+                        });
+                    }
+                });
+            });
+
+            $('[action="add"]').on("click", function (e) {
+                $.ajax({
+                    url: "/" + url + "Add",
+                    type: "GET",
+                    data: {
+                        ID: e.currentTarget.id,
+                    },
+                    success: function (data) {
+                        $("#largeModal .modal-content").html(data).find("[data-dismiss]").each((_, elem) => {
+                            elem.addEventListener("click", () => {
+                                $("#largeModal").modal("hide");
+                            });
+                        });;
+                        $("#largeModal").modal("show");
+                    },
+                    error: function (error) {
+                        console.error(error);
+                    },
+                });
+            });
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const myParam = urlParams.get("success");
+            const error = urlParams.get("error");
+            if (myParam == "true") {
+                Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: "İşlem Başarılı",
+                    showConfirmButton: false,
+                });
+                window.history.pushState("", "", "../" + url);
+            }
+            if (error) {
+                Swal.fire({
+                    position: "top-end",
+                    icon: "error",
+                    title: "İşlem Başarısız",
+                    text: error,
+                    showConfirmButton: false,
+                });
+                window.history.pushState("", "", "../" + url);
+            }
+
+            let data = JSON.parse('<%= JSON.stringify(data.columnData) %>'.replaceAll("&#34;", "\""));
+            //let lastId = Object.values(data[data.length-1])[0]
+            let lastId = '<%= data.columnData.length ? Object.values(data.columnData[data.columnData.length-1])[0]: "" %>'
+
+            var app = angular.module('myApp', []);
+            app.controller('myCtrl', function ($scope, $http) {
+
+
+                $scope.bindResult = function (newData) {
+                    $scope.listOfData = newData;
+                    $scope.$digest();
+                };
+
+                setTimeout(() => {
+                    $scope.bindResult(data);
+                }, 10);
+
+
+
+                let yscroll = true;
+
+                $(window).scroll(function () {
+
+                    if (($(window).scrollTop() + $(window).height() + 10 >= $(document).height()) && (yscroll == true) && lastId > 0) {
+                        yscroll = false
+
+                        $.ajax({
+                            url: url,
+                            type: "GET",
+                            data: {
+                                lastId
+                            },
+                            success: function (result) {
+                                result = JSON.parse(result).columnData
+                                data = data.concat(result)
+                                if (result != undefined && result != '') {
+                                    $scope.bindResult(data);
+                                    lastId = Object.values(result[result.length - 1])[0]
+                                    yscroll = true
+                                }
+                                else {
+                                    yscrool = false
+                                }
+
+                            },
+                            error: function (error) {
+                                console.error(error);
+                                yscroll = false
+                            },
+                        });
+
+                    }
+                });
+
+
+                let language; // Backend'den gelen dil parametresi (örneğin 'en' veya 'tr')
+                language = getCookie("languages")
+                if (language != "") {
+                    loadMenu(language);
+                } else {
+                    language = navigator.language || navigator.userLanguage
+                    loadMenu(language);
+                }
+
+                function getCookie(cname) {
+                    let name = cname + "=";
+                    let decodedCookie = decodeURIComponent(document.cookie);
+                    let ca = decodedCookie.split(';');
+                    for (let i = 0; i < ca.length; i++) {
+                        let c = ca[i];
+                        while (c.charAt(0) == ' ') {
+                            c = c.substring(1);
+                        }
+                        if (c.indexOf(name) == 0) {
+                            return c.substring(name.length, c.length);
+                        }
+                    }
+                    return "";
+                }
+
+                function loadMenu(language) {
+                    //var jsonFile = language === 'en' ? 'english.json' : 'turkish.json';
+                    language = "../languages/" + language + ".json";
+                    $http.get(language).then(function (response) {
+                        $scope.fields = response.data.fields;
+                        $scope.title = response.data.title;
+                        $scope.process = response.data.process;
+                    });
+                }
+            });
+
+            $('#langs > li').click(function () {
+                document.cookie = 'languages=' + $(this).data('val')
+                location.reload();
+            });
+
+
+            function myFunction() {
+                var input, filter, table, tr, td, i, txtValue;
+                input = document.getElementById("myInput");
+                filter = input.value.toUpperCase();
+                table = document.getElementById("example");
+                tr = table.getElementsByTagName("tr");
+                for (i = 0; i < tr.length; i++) {
+                    len = tr[i].getElementsByTagName("td").length;
+                    for (j = 0; j < len; j++) {
+                        td = tr[i].getElementsByTagName("td")[j];
+                        if (td) {
+                            txtValue = td.textContent || td.innerText;
+                            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                                tr[i].style.display = "";
+                                break
+                            } else {
+                                tr[i].style.display = "none";
+                            }
+                        }
+                    }   
+                }
+            }
+
+            function sortTableByColumn(table, column, asc = true) {
+                const dirModifier = asc ? 1 : -1;
+                const tBody = table.tBodies[0];
+                const rows = Array.from(tBody.querySelectorAll("tr"));
+
+                // sort each row
+                const sortedRows = rows.sort((a, b) => {
+                    const aColText = a.querySelector(`td:nth-child(${column + 1})`).textContent.trim();
+                    const bColText = b.querySelector(`td:nth-child(${column + 1})`).textContent.trim();
+
+                    return aColText > bColText ? (1 * dirModifier) : (-1 * dirModifier);
+                });
+
+                // Remove all existing TRs from the table
+                //while (tBody.firstChild) {
+                //    tBody.removeChild(tBody.firstChild);
+                //}
+
+                // Re-add the newly sorted rows
+                tBody.append(...sortedRows);
+
+                // Remember how the column is currently sorted 
+                table.querySelectorAll("th").forEach(th => th.classList.remove("th-sort-asc", "th-sort-desc"));
+                table.querySelector(`th:nth-child(${column + 1})`).classList.toggle("th-sort-asc", asc);
+                table.querySelector(`th:nth-child(${column + 1})`).classList.toggle("th-sort-desc", !asc);
+
+            }
+
+            document.querySelectorAll(".table-sortable th").forEach(headerCell => {
+                headerCell.addEventListener("click", () => {
+                    const tableElement = headerCell.parentElement.parentElement.parentElement;
+                    const headerIndex = Array.prototype.indexOf.call(headerCell.parentElement.children, headerCell);
+                    const currentIsAscending = headerCell.classList.contains("th-sort-asc");
+
+                    sortTableByColumn(tableElement, headerIndex, !currentIsAscending);
+                });
+            });
+
+            function chBox(elem) {
+                
+                let ch = $(elem)
+                ch.attr('value', (ch.attr('value')==='true')? false: true)
+
+                ch.attr('value')==='true'? $('.checkmark').css('background-color','#2f98e3'): $('.checkmark').css('background-color','#ccc')
+                
+            }
+
+        </script>

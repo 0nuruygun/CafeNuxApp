@@ -1,0 +1,30 @@
+<header id="header" class="header">
+    <div class="header-menu">
+        <div class="col-12 float-right">
+            <div class="language-select" id="language-select">
+                <a href="logout">
+                    <i class="fa fa-power-off"></i>
+                </a>
+            </div>
+
+            <div class="language-select dropdown" id="language-select">
+                <a class="dropdown-toggle" href="#" data-toggle="dropdown" id="language"
+                    aria-haspopup="true" aria-expanded="true">
+                    Lang
+                </a>
+                <div class="dropdown-menu" aria-labelledby="language">
+                    <ul id='langs'>
+                        <li data-val='en-EN'>English</li>
+                        <li data-val='tr-TR'>Türkçe</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="userClass">
+                <%= data.name %>
+            </div>
+
+
+        </div>
+    </div>
+</header>

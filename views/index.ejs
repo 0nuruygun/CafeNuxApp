@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+    <%- include(`${partials}/head`)%>
+
+    <body ng-app="myApp" ng-controller="myCtrl" onload="showPage()">
+        <div id="loader">
+            <span class="loader"></span>
+        </div>
+        <%- include(`${partials}/nav`)%>
+        <!-- Right Panel -->
+        <div id="right-panel" class="right-panel" style="display: none;">
+            <!-- Header-->
+
+            <%- include(`${partials}/breadcrumbs`)%>
+
+            <div class="content mt-3 ml-3">
+                <div class="row col-12">
+                    
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="card text-white bg-flat-color-2">
+                            <div class="card-body pb-0">
+                                <h4 class="mb-0">
+                                    <span class="count">10468</span>
+                                </h4>
+                                <p class="text-light">{{fields.weeklyoccupancyrate}}</p>
+
+                                <div class="chart-wrapper px-0" style="height: 70px" height="70">
+                                    <canvas id="widgetChart2"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--/.col-->
+
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="card text-white bg-flat-color-1">
+                            <div class="card-body pb-0">
+                                <h4 class="mb-0">
+                                    <span class="count">10468</span>
+                                </h4>
+                                <p class="text-light">{{fields.busiesthours}}</p>
+
+                                <div class="chart-wrapper px-0" style="height: 70px" height="70">
+                                    <canvas id="widgetChart1"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--/.col-->
+
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="card text-white bg-flat-color-3">
+                            <div class="card-body pb-0">
+                                <h4 class="mb-0">
+                                    <span class="count">10468</span>
+                                </h4>
+                                <p class="text-light">{{fields.reservationrate}}</p>
+                            </div>
+
+                            <div class="chart-wrapper px-0" style="height: 70px" height="70">
+                                <canvas id="widgetChart3"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <!--/.col-->
+
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="card text-white bg-flat-color-4">
+                            <div class="card-body pb-0">
+                                <h4 class="mb-0">
+                                    <span class="count">10468</span>
+                                </h4>
+                                <p class="text-light">{{fields.ordersonline}}</p>
+
+                                <div class="chart-wrapper px-3" style="height: 70px" height="70">
+                                    <canvas id="widgetChart4"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--/.col-->
+                </div>
+
+                <div class="row col-12">
+                    <div class="col-lg-8">
+                        <div class="card">
+                            <div class="card-body">
+                                <div
+                                    class="chartjs-size-monitor"
+                                    style="position: absolute; inset: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1"
+                                >
+                                    <div
+                                        class="chartjs-size-monitor-expand"
+                                        style="
+                                            position: absolute;
+                                            left: 0;
+                                            top: 0;
+                                            right: 0;
+                                            bottom: 0;
+                                            overflow: hidden;
+                                            pointer-events: none;
+                                            visibility: hidden;
+                                            z-index: -1;
+                                        "
+                                    >
+                                        <div style="position: absolute; width: 1000000px; height: 1000000px; left: 0; top: 0"></div>
+                                    </div>
+                                    <div
+                                        class="chartjs-size-monitor-shrink"
+                                        style="
+                                            position: absolute;
+                                            left: 0;
+                                            top: 0;
+                                            right: 0;
+                                            bottom: 0;
+                                            overflow: hidden;
+                                            pointer-events: none;
+                                            visibility: hidden;
+                                            z-index: -1;
+                                        "
+                                    >
+                                        <div style="position: absolute; width: 200%; height: 200%; left: 0; top: 0"></div>
+                                    </div>
+                                </div>
+                                <h4 class="mb-3">{{fields.weeklyturnoverprofitgraph}}</h4>
+                                <canvas
+                                    id="barChart"
+                                    width="672"
+                                    height="336"
+                                    style="display: block; height: 168px; width: 336px"
+                                    class="chartjs-render-monitor"
+                                ></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="mb-3">{{fields.tableoccupancy}}</h4>
+                                <canvas id="pieChart"></canvas>
+                            </div>
+                        </div>
+                    </div><!-- /# column -->
+
+                </div>
+                <div class="row col-12">
+                    <div class="card col-sm-6 col-lg-3">
+                        <div class="card-body">
+                            <div class="stat-widget-one">
+                                <div class="stat-icon dib"><i class="ti-money text-success border-success"></i></div>
+                                <div class="stat-content dib">
+                                    <div class="stat-text">{{fields.dailyturnover}}</div>
+                                    <div class="stat-digit"><%= data.list[0][0].DailyRevenue%></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card col-sm-6 col-lg-3">
+                        <div class="card-body">
+                            <div class="stat-widget-one">
+                                <div class="stat-icon dib"><i class="ti-layout-grid2 text-danger border-danger"></i></div>
+                                <div class="stat-content dib">
+                                    <div class="stat-text">{{fields.finishedorders}}</div>
+                                    <div class="stat-digit"><%= data.list[1][0].CompletedOrdersCount%></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card col-sm-6 col-lg-3">
+                        <div class="card-body">
+                            <div class="stat-widget-one">
+                                <div class="stat-icon dib"><i class="ti-layout-grid2 text-warning border-warning"></i></div>
+                                <div class="stat-content dib">
+                                    <div class="stat-text">{{fields.pendingorders}}</div>
+                                    <div class="stat-digit"><%= data.list[2][0].PendingOrdersCount%></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card col-sm-6 col-lg-3">
+                        <div class="card-body">
+                            <div class="stat-widget-one">
+                                <div class="stat-icon dib"><i class="ti-user text-primary border-primary"></i></div>
+                                <div class="stat-content dib">
+                                    <div class="stat-text">{{fields.offdutypersonnel}}</div>
+                                    <div class="stat-digit"><%= data.list[3][0].DayOffCount%></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-6 col-lg-3">
+                    <div class="card">
+                        <div class="card-header">{{fields.bestsellers}}</div>
+                        <div class="card-body">
+                            <div class="clearfix">
+                                <% data.list[4].forEach((item,index) =>{ %>
+                                <div class="card">
+                                    <div class="card-body p-0 clearfix">
+                                        <i class="bg-info p-4 font-2xl mr-3 float-left text-light"><%= index+1 %></i>
+                                        <div class="h5 text-info mb-0 pt-3">$<%= item.Selling %></div>
+                                        <div class="text-muted text-uppercase font-weight-bold font-xs small"><%= item.ProductName%></div>
+                                    </div>
+                                </div>
+                                <% })%>
+                            </div>
+                            <div class="b-b-1 pt-3"></div>
+                            <hr />
+                            <div class="more-info pt-2" style="margin-bottom: -10px">
+                                <a class="font-weight-bold font-xs btn-block text-muted small" href="#"
+                                    >{{fields.viewmore}}<i class="fa fa-angle-right float-right font-lg"></i
+                                ></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-lg-3">
+                    <div class="card">
+                        <div class="card-header">{{fields.lowestsellers}}</div>
+                        <div class="card-body">
+                            <div class="clearfix">
+                                <% data.list[5].forEach((item,index) =>{ %>
+                                <div class="card">
+                                    <div class="card-body p-0 clearfix">
+                                        <i class="bg-warning p-4 font-2xl mr-3 float-left text-light"><%= index+1 %></i>
+                                        <div class="h5 text-warning mb-0 pt-3">$<%= item.Selling %></div>
+                                        <div class="text-muted text-uppercase font-weight-bold font-xs small"><%= item.ProductName%></div>
+                                    </div>
+                                </div>
+                                <% })%>
+                            </div>
+                            <div class="b-b-1 pt-3"></div>
+                            <hr />
+                            <div class="more-info pt-2" style="margin-bottom: -10px">
+                                <a class="font-weight-bold font-xs btn-block text-muted small" href="#"
+                                    >{{fields.viewmore}} <i class="fa fa-angle-right float-right font-lg"></i
+                                ></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-6 col-lg-3">
+                    <div class="card">
+                        <div class="card-header">{{fields.staffwiththemostorders}}</div>
+                        <div class="card-body">
+                            <div class="clearfix">
+                                <% data.list[6].forEach((item,index) =>{ %>
+                                <div class="card">
+                                    <div class="card-body p-0 clearfix">
+                                        <i class="bg-danger p-4 font-2xl mr-3 float-left text-light"><%= index+1 %></i>
+                                        <div class="h5 text-danger mb-0 pt-3">$<%= item.TotalOrders %></div>
+                                        <div class="text-muted text-uppercase font-weight-bold font-xs small"><%= item.PersonnelName%></div>
+                                    </div>
+                                </div>
+                                <% })%>
+                            </div>
+                            <div class="b-b-1 pt-3"></div>
+                            <hr />
+                            <div class="more-info pt-2" style="margin-bottom: -10px">
+                                <a class="font-weight-bold font-xs btn-block text-muted small" href="#"
+                                    >{{fields.viewmore}}<i class="fa fa-angle-right float-right font-lg"></i
+                                ></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-6 col-lg-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="h4 text-muted text-left mb-4">
+                                {{fields.decreasingstock}}
+                                <i class="fa fa-cart-plus"></i>
+                            </div>
+                            <div class="h1 text-muted text-right mb-4"></div>
+                            <div class="h4 mb-0"><span class="count">1400</span> gr</div>
+                            <small class="text-muted text-uppercase font-weight-bold">Kahve Kreması</small>
+                            <div class="progress progress-xs mt-3 mb-0 bg-flat-color-3" style="width: 40%; height: 5px"></div>
+                            <hr />
+                            <div class="h4 mb-0"><span class="count">900</span> gr</div>
+                            <small class="text-muted text-uppercase font-weight-bold">Şeker</small>
+                            
+                            <hr />
+                            <div class="h4 mb-0"><span class="count">500</span> gr</div>
+                            <small class="text-muted text-uppercase font-weight-bold">Yeşil Çay</small>
+                            <div class="progress progress-xs mt-3 mb-0 bg-flat-color-5" style="width: 40%; height: 5px"></div>
+                            <hr />
+                            <div class="h4 mb-0"><span class="count">1200</span> gr</div>
+                            <small class="text-muted text-uppercase font-weight-bold">Kahve Kreması</small>
+                            <div class="progress progress-xs mt-3 mb-0 bg-flat-color-4" style="width: 40%; height: 5px"></div>
+                            <div class="b-b-1 pt-3"></div>
+                            <hr />
+                            <div class="more-info pt-2" style="margin-bottom: -10px">
+                                <a class="font-weight-bold font-xs btn-block text-muted small" href="#"
+                                    >{{fields.viewmore}}<i class="fa fa-angle-right float-right font-lg"></i
+                                ></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- .content -->
+        </div>
+        <!-- /#right-panel -->
+    
+        <script>
+            let datas = JSON.parse("<%= data.graph%>".replaceAll("&#34;", '"'));
+        </script>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+
+        <!-- language -->
+
+
+        <script src="vendors/jquery/dist/jquery.min.js"></script>
+        <script src="vendors/popper.js/dist/umd/popper.min.js"></script>
+        <script src="vendors/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script src="/assets/js/main.js"></script>
+
+        <script src="vendors/chart.js/dist/Chart.bundle.min.js"></script>
+
+        <!--  flot-chart js -->
+        <script src="vendors/flot/jquery.flot.js"></script>
+        <script src="vendors/flot/jquery.flot.pie.js"></script>
+        <script src="../js/initCharts.js"></script>
+        <script src="js/language.js"></script>
+    </body>
+</html>

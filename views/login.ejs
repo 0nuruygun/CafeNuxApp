@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="/style/login.css">
+    <script src="https://www.google.com/recaptcha/api.js?render=6LfLBKArAAAAAG51qspdZnp0OWcHzTHXa-tDHAob" async
+        defer></script>
+
+</head>
+
+<body>
+    <div class="flex-container">
+        <div class="content-container">
+            <div class="form-container">
+                <form action="login" method="POST" id="loginForm">
+                    <h1>
+                        Login
+                    </h1>
+                    <br>
+                    <input type="text" name="user" id="user" placeholder="E-Mail" />
+                    <br>
+                    <input type="password" name="pass" id="pass" placeholder="Password" />
+                    <input type="hidden" name="recaptchaToken" id="recaptchaToken" />
+
+                    <br>
+                    <input type="submit" />
+
+                    <div class="output-message">
+                        <% if (typeof success !="undefined" && success) { %>
+                            <div class="success">
+                                <p>
+                                    <%= message %>
+                                </p>
+                            </div>
+                            <% } else if (typeof success !="undefined" && !success) { %>
+                                <div class="error">
+                                    <p>
+                                        <%= message %>
+                                    </p>
+                                </div>
+                                <% } %>
+                    </div>
+
+            </div>
+        </div>
+
+        <script src="../js/script.js">
+
+        </script>
+        <script>
+            function ensureRecaptchaReady(maxWaitMs = 5000) {
+                return new Promise((resolve, reject) => {
+                    const start = Date.now();
+                    (function check() {
+                        if (window.grecaptcha && typeof grecaptcha.ready === 'function') {
+                            grecaptcha.ready(resolve);
+                        } else if (Date.now() - start < maxWaitMs) {
+                            setTimeout(check, 100);
+                        } else {
+                            reject(new Error('reCAPTCHA not loaded'));
+                        }
+                    })();
+                });
+            }
+
+            window.addEventListener('DOMContentLoaded', () => {
+                const form = document.getElementById('loginForm');
+                form.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    try {
+                        await ensureRecaptchaReady();
+                        const token = await grecaptcha.execute("6LfLBKArAAAAAG51qspdZnp0OWcHzTHXa-tDHAob", { action: 'login' });
+                        document.getElementById('recaptchaToken').value = token;
+                        form.submit();
+                    } catch (err) {
+                        console.error(err);
+                        alert('reCAPTCHA yüklenemedi, lütfen sayfayı yenileyip tekrar deneyin.');
+                    }
+                });
+            });
+        </script>
+
+
+
+</body>
+
+</html>

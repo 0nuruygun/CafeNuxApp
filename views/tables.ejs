@@ -1,0 +1,902 @@
+<!doctype html>
+<html class="no-js" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>CafeNux</title>
+
+    <%- include(`${partials}/head_table`)%>
+    <style>
+        .noti.no-noti {
+            display: block;
+        }
+
+        .noti+.no-noti {
+            display: none;
+        }
+        .no-noti{
+            width: max-content;
+        }
+
+    </style>
+
+<body ng-app="myApp" ng-controller="myCtrl" onload="showPage()">
+    <div id="loader">
+        <span class="loader"></span>
+    </div>
+    <!-- Left Panel -->
+    <%- include(`${partials}/nav`)%>
+    <!-- Left Panel -->
+
+    <!-- Right Panel -->
+    <div id="right-panel" style="display: none;" class="right-panel grid-container">
+
+        <!-- Header-->
+        <header id="header" class="header">
+            <div class="header-menu">
+
+                <div class="col-sm-7">
+                    <div class="header-left">
+                        
+                        <div class="dropdown for-notification">
+                            <button
+                                class="btn btn-secondary dropdown-toggle"
+                                type="button"
+                                id="notification"
+                                data-toggle="dropdown"
+                                aria-haspopup="true"
+                                aria-expanded="false">
+                                <i class="fa fa-bell text-light"></i>
+                                <span class="count bg-danger">{{notification.length}}</span>
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="notification">
+                                <div ng-repeat="warn in notification" class="noti"> 
+                                    <div id="not-{{warn.NotificationID}}" class="dropdown-item media">
+                                        <i class="fa fa-check text-light"></i>
+                                        <p>{{warn.NotificationDescription}}</p>
+                                        <i class="fa fa-trash-o text-light pl-3" ng-click="notificationUpdate(this.warn.NotificationID)"></i>
+                                    </div>
+                                    
+                                </div>
+                                <div class="no-noti alert alert-warning m-3">
+                                    <i class="fa fa-warning"> </i>
+                                    Yeni Bildirim Yok
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-5">
+                    
+                    <div class="language-select" id="language-select">
+                        <a href="logout">
+                            <i class="fa fa-power-off text-light"></i>
+                        </a>
+
+                    </div>
+                    <div class="language-select dropdown d-flex" id="language-select">
+                        
+            
+            
+
+                        <div class="dropdown-menu text-light" aria-labelledby="language">
+                            <ul id='langs'>
+                                <li data-val='en-EN'>English</li>
+                                <li data-val='tr-TR'>Türkçe</li>
+                            </ul>
+                        </div>
+                        <a class="dropdown-toggle text-light" data-toggle="dropdown" id="language"
+                            aria-haspopup="true" aria-expanded="true">
+                            Lang
+                        </a>
+                    </div>
+
+                    <div class="text-light userName">
+                        <%= name %>
+                    </div>
+                        
+                </div>
+            </div>
+        </header><!-- /header -->
+        <!-- Header-->
+        <div class="breadcrumbs">
+            <div class="col-4">
+                <div class="page-header float-left">
+                    <div class="page-title">
+                        <h1>Dashboard</h1>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-8">
+                <div class="page-header float-right">
+                    <div class="page-title">
+                        <button class="btn btn-secondary back-step" style="display: none;">
+                            <i class="fa fa-reply-all"></i>
+                        </button>
+                        <button class="btn btn-secondary detail-btn detail-nav" style="display: none;">
+                            <i class="fa fa-edit"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="content-tlb">
+            <div class="height">
+                <div id="tables" class="content mt-3 box-area">
+                    <div ng-repeat="table in tables" class="box">
+                        <!--ng-click="showDetailOfTable(this.table.Id)" -->
+                        <div id="{{ table.TableInfoID }}" onclick="tableId=this.id" class="p-3" type="button"
+                            data-toggle="modal" data-target="#{{ table.TableStatusColor }}">
+                            <div class="card text-white rounded {{ (table.isReserved)? 'yellow': table.TableStatusColor }}">
+                                <div class="card-body pb-0">
+                                    <div class="float-right">
+                                        <i class="fa  fa-plus-circle"></i>
+                                    </div>
+                                    <h4 class="mb-0">
+                                        <span>{{ table.TableInfoName }}</span>
+                                    </h4>
+                                    <p class="text-light">{{ table.TableStatusName }}</p>
+
+                                    <div class="chart-wrapper px-0" style="height: 70px" height="70">
+                                        <h2>${{ table.TableSessionPrice | number : 2 }}</h2>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="categories" class="content mt-3 box-area" style="display: none">
+                    <div ng-repeat="categoryList in categories" class="box">
+                        <div ng-click="showMenuOfCat(this.categoryList.CategoryID)" class="p-3">
+                            <div class="card text-white {{ categoryList.CategoryColor }} rounded">
+                                <div class="card-body pb-0">
+                                    <div class="chart-wrapper px-0">
+                                        <img class="icon-img"
+                                            style="background-image: url({{ categoryList.CategoryIcon}})" />
+
+                                        <h3>{{ categoryList.CategoryName }}</h3>
+                                        <p class="text-light">13 Seçenek</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="menu-list" class="content mt-3" style="display: none">
+                    <div class="animated fadeIn">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card menu">
+                                    <div class="card-body">
+                                        <table id="bootstrap-data-table-export" class="table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Id</th>
+                                                    <th>Ürün</th>
+                                                    <th>Açıklama</th>
+                                                    <th>Fiyat</th>
+                                                    <th>Ekle</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr ng-repeat="list in product">
+                                                    <td>{{ list.ProductID }}</td>
+                                                    <td>{{ list.ProductName }}</td>
+                                                    <td>{{ list.ProductDesc }}</td>
+                                                    <td>{{ list.ProductPrice }}</td>
+                                                    <td id="{{ list.ProductID }}"
+                                                        ng-click="sendOrder(this.list.ProductID)"
+                                                        style="text-align: center; cursor: pointer">
+                                                        <i class="fa fa-plus"></i>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- .animated -->
+                </div>
+            </div>
+        </div> <!-- .content -->
+        <!--Detail-->
+        <div class="detail">
+
+
+            <div class="detail-sum ">
+                <div class="modal-header detail-head">
+                    <h5 class="modal-title text">{{ selected }}</h5>
+                    <button id="closeDetail" type="button" class="close text-white">
+                        <i class="fa fa-close"></i>
+                    </button>
+                </div>
+
+                <div class="detail-list p-1">
+                    <div class="order-list" ng-repeat="order in orders">
+                        <div ng-click="removeOrder(this.order.OrderID)"
+                            class="pl-3 pr-3 pt-2 pb-2 d-flex justify-content-between" role="alert">
+                            <div class="rounded-circle">{{ order.OrderID }}</div>
+                            <div class="pl-1">{{ order.ProductName }}</div>
+                            <div class="pl-1">{{ order.OrderStatusID }}</div>
+                            <div class="h5 m-0">$ {{ order.ProductPrice }}</div>
+                        </div>
+                    </div>
+                    <div class="no-sessions alert alert-warning m-3">
+                        <i class="fa fa-warning"> </i>
+                        Sipariş henüz alınmadı.
+                    </div>
+                </div>
+                <div class="alert detail-bottom w-100" role="alert">
+                    <div class="calc">
+                        <p>Ara Toplam</p>
+                        <div class="h6 m-0">${{ total / 1.18 | number : 2 }}</div>
+                    </div>
+                    <div class="calc">
+                        <p>KDV</p>
+                        <div class="h6 m-0">${{ total - total / 1.18 | number : 2 }}</div>
+                    </div>
+                    <hr class="hr" />
+                    <div class="icon">
+                        <p>TOTAL</p>
+                        <div class="h5 m-0 text">${{ total | number : 2 }}</div>
+                    </div>
+                    <hr class="hr" />
+
+                    <input type="radio" name="pay" id="chash" />
+                    <input type="radio" name="pay" id="credit" />
+                    <div class="switch">
+                        <label for="chash"><i class="fa fa-money"></i><span>Nakit</span></label>
+                        <label for="credit"><i class="fa fa-credit-card"></i><span>Kredi
+                                Kartı</span></label>
+                    </div>
+
+                    <button ng-click="sendPayment()" id="clsTable" type="button"
+                        class="btn btn-outline-link btn-lg btn-block text-white" disabled>
+                        Hesabı Kapat
+                    </button>
+                </div>
+            </div>
+        </div>
+
+
+    </div><!-- /#right-panel -->
+
+
+    <div class="modal fade" id="blue" tabindex="-1" role="dialog" aria-labelledby="smallmodalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <!--Açık masa-->
+
+                    <button id="getOrder" ng-click="showDetailOfTable()" data-dismiss="modal" type="button" class="btn-block btn btn-secondary heb">
+                        <!-- Sipariş Al -->
+                         {{fields.getorder}}
+                    </button>
+                    <button type="button" class="btn-block btn btn-secondary" data-toggle="modal" data-target="#datepicker" data-dismiss="modal">
+                        <!-- Rezervasyon Al -->
+                         {{fields.getareservation}}
+                    </button>
+
+                    <button class="detail-nav btn-block btn btn-secondary" ng-click="showDetailOfTable()" type="button" data-dismiss="modal">{{fields.details}}</button>
+                    <button type="button" class="btn-block btn btn-danger" data-dismiss="modal">{{fields.giveup}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="yellow" tabindex="-1" role="dialog" aria-labelledby="smallmodalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <!--Rezervasyon-->
+
+                    <button ng-click="openTable(this.table.Id)" type="button" class="btn-block btn btn-secondary" data-dismiss="modal">{{fields.openthetable}}</button>
+                    <button type="button" class="btn-block btn btn-secondary" data-toggle="modal" data-target="#datepicker" data-dismiss="modal">
+                        {{fields.getareservation}}
+                    </button>
+                    <button type="button" class="btn-block btn-block btn btn-danger" data-dismiss="modal">{{fields.giveup}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="red" tabindex="-1" role="dialog" aria-labelledby="smallmodalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <!--Kapalı Masa-->
+
+                    <button ng-click="openTable(this.table.Id)" type="button" class="btn-block btn btn-secondary" data-dismiss="modal">{{fields.openthetable}}</button>
+                    <button type="button" class="btn-block btn btn-secondary" data-toggle="modal" data-target="#datepicker" data-dismiss="modal">
+                        {{fields.getareservation}}
+                    </button>
+                    <button type="button" class="btn-block btn-block btn btn-danger" data-dismiss="modal">{{fields.giveup}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="datepicker" tabindex="-1" role="dialog" aria-labelledby="smallmodalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="calendar">
+                        <div class="front">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="calendar calendar-first" id="calendar">
+                                        <div class="calendar_header">
+                                            <button class="switch-month switch-left"><i class="fa fa-chevron-left"></i></button>
+                                            <h2></h2>
+                                            <button class="switch-month switch-right"><i class="fa fa-chevron-right"></i></button>
+                                        </div>
+                                        <div class="calendar_weekdays"></div>
+                                        <div class="calendar_content"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="back">
+                            <input id="name" placeholder="Rezervasyon sahibi?" />
+                            <input id="phone" class="phone" placeholder="Telefon numarası?" />
+                            <div class="info">
+                                <div class="date">
+                                    <p class="info-date">{{fields.date}}: <span id="rezDate"></span></p>
+                                </div>
+                                <div class="address">
+                                    <p>{{fields.hour}}: <input id="rezTime" type="time" class="rezTime" /></p>
+                                </div>
+                                <!--
+                                <div class="observations">
+                                    <p>
+                                        Address: <span>129 W 81st St, New York, NY</span>
+                                    </p>
+                                </div>
+                            --></div>
+
+                            <div class="actions">
+                                <button id="rezSave" class="save">{{fields.save}} <i class="ion-checkmark"></i></button>
+                                <button class="dismiss">{{fields.back}} <i class="ion-android-close"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-block btn-block btn btn-danger" data-dismiss="modal">{{fields.giveup}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Right Panel -->
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+    <script src="vendors/jquery/dist/jquery.min.js"></script>
+    <script src="vendors/popper.js/dist/umd/popper.min.js"></script>
+    <script src="vendors/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script src="js/calender.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+
+        $('.fa-close').click(() => {
+            $('#right-panel').addClass('grid-container');
+            $('#right-panel').removeClass('grid-container-open');
+            $('.detail').hide();
+         
+        })
+
+        let x = '<%= name %>' 
+
+        let tableId,
+            count = 0;
+
+        const socket = io({
+            auth: {
+                serverOffset: 0
+            },
+            
+            ackTimeout: 10000,
+            retries: 3,
+            query: {
+                sessionId: '<%= data %>' 
+            }
+        });
+
+        $("#detail").hide();
+        $(".detail-nav").on("click", () => {
+            $(".detail").show();
+
+            $('#tablesl').removeClass('box-area');
+            $('#tablesl').addClass('box-area-open');
+  
+            $('#right-panel').removeClass('grid-container');
+            $('#right-panel').addClass('grid-container-open');
+            //bura
+            //$("#main").addClass("main");
+        });
+
+        $('input[name="pay"]').on("click", function (e) {
+            $("#clsTable").prop("disabled", false);
+            $("#clsTable").removeClass("text-white");
+        });
+
+        $("#closeDetail").on("click", function (e) {
+            $("#order-detail").hide();
+            $('input[name="pay"]').prop("checked", false);
+            $("#clsTable").prop("disabled", true);
+            $("#clsTable").addClass("text-white");
+            $("#main").removeClass("main");
+        });
+
+        $("#getOrder").on("click", function (e) {
+            $("#tables").hide();
+            $(".back-step").show();
+            $("#categories").show();
+            $(".detail-btn").show();
+        });
+
+        $(".back-step").on("click", function (e) {
+            if ($("#categories").css("display") == "none") {
+                $("#categories").show();
+                $("#menu-list").hide();
+            } else {
+                $("#tables").show();
+                $("#categories").hide();
+                $(".back-step").hide();
+                $(".detail-btn").hide();
+            }
+        });
+
+        var data = {};
+        var app = angular.module("myApp", []);
+        app.controller("myCtrl", function ($scope, $http) {
+
+            $scope.selected = "";
+            $scope.total = "";
+
+            $scope.removeOrder = (orderId) => {
+                let removableOrder = data.orders.find((item) => {
+                    if (item.OrderID == orderId) {
+                        return item
+                    }
+
+                })
+                if (removableOrder.OrderStatusID != 1 || removableOrder.OrderStatusID == undefined) {
+                    Swal.fire({
+                        icon: "error",
+                        title: "İŞLEM GEÇERSİZ",
+                        text: "Sipariş işleme alındığı için iptal edilemez !"
+                    });
+                }
+                else {
+                    Swal.fire({
+                        title: "Sipariş silinsin mi?",
+                        showDenyButton: true,
+                        showCancelButton: false,
+                        confirmButtonText: "Sil",
+                        denyButtonText: `Vazgeç`,
+                    }).then((result) => {
+                        /* Read more about isConfirmed, isDenied below */
+                        if (result.isConfirmed) {
+                            let tableIndex = data.tables.findIndex((item) => {
+                                return item.TableInfoID == parseInt(tableId);
+                            });
+                            let indexOfOrder = data.orders.findIndex((item) => {
+                                return item.OrderID == orderId;
+                            });
+
+                            sender = {};
+                            sender.option = "removeOrder";
+                            sender.tableId = parseInt(tableId);
+                            sender.orderId = orderId;
+                            sender.tableSessionId = data.tables[tableIndex].TableSessionId;
+
+                            sender.price = data.orders[indexOfOrder].ProductPrice;
+                            const clientOffset = ""; //= `${socket.id}-${counter++}`;
+
+                            socket.emit("onlineOrder", sender, (err, res) => {
+                                if ((res.status == "success")) {
+                                    data.orders.splice(indexOfOrder, 1);
+                                    data.tables[tableIndex].TableSessionPrice -= sender.price;
+                                    $scope.showDetailOfTable(tableId);
+                                    $scope.bindResult(data);
+
+                                    Swal.fire({
+                                        position: "top-end",
+                                        icon: "success",
+                                        title: "Sipariş silindi.",
+                                        showConfirmButton: false,
+                                        timer: 1500,
+                                    });
+                                }
+
+                                if (err) {
+                                    Swal.fire({
+                                        title: "Error!",
+                                        text: "Bir hata ile karşılaşıldı.",
+                                        icon: "error",
+                                        confirmButtonText: "Cool",
+                                    });
+                                }
+                            });
+                        } else if (result.isDenied) {
+                            Swal.fire("Değişiklik yapılmadı.", "", "info");
+                        }
+                    });
+                }
+            };
+
+            $scope.showMenuOfCat = function (id) {
+                $("#menu-list").show();
+                $("#categories").hide();
+                $(".back-step").show();
+                $scope.product = data.productList.filter((cat) => {
+                    if (cat.ProductCategoryID === id) {
+                        return cat;
+                    }
+                });
+            };
+
+            $scope.showDetailOfTable = function (id) {
+                id = tableId;
+                $scope.selected = data.tables.find((item) => {
+                    return item.TableInfoID == id;
+                }).TableInfoName;
+
+                $scope.total = 0;
+                $scope.orders = data.orders.filter((ord) => {
+                    if (ord.OrderTableID === parseInt(id)) {
+                        $scope.total += ord.ProductPrice;
+                        return ord;
+                    }
+                });
+            };
+
+            $scope.openTable = () => {
+                sender = {};
+                sender.option = "tables";
+                sender.tableId = tableId;
+                sender.statusId = 1;
+                sender.Status = "Açık";
+                sender.Color = "blue";
+                index = data.tables.findIndex((item) => {
+                    return item.TableInfoID == tableId;
+                });
+                const clientOffset = null; //= `${socket.id}-${counter++}`;
+                socket.emit("onlineOrder", sender, (err, res) => {
+                    data.tables[index].TableStatusName = "Açık";
+                    data.tables[index].TableStatusColor = "blue";
+                    data.tables[index].TableSessionId = res.scope;
+                    data.tables[index].isReserved = 0;
+                    $scope.bindResult(data);
+                });
+            };
+
+            $scope.sendOrder = (emitValue) => {
+                sender = {};
+                sender.option = "orders";
+                sender.tableId = parseInt(tableId);
+                sender.productId = emitValue;
+
+                const clientOffset = ""; //= `${socket.id}-${counter++}`;
+                socket.emit("onlineOrder", sender, (err, res) => {
+                    if ((res.status == "success")) {
+                        let product = data.productList.find((item) => {
+                            return item.ProductID == emitValue;
+                        });
+                        let tableIndex = data.tables.findIndex((item) => {
+                            return item.TableInfoID == tableId;
+                        });
+
+                        let ord = {};
+                        ord.OrderID = res.scope;
+                        ord.ProductID = product.ProductID;
+                        ord.ProductName = product.ProductName;
+                        ord.ProductPrice = product.ProductPrice;
+                        ord.ProductDesc = "descrp";
+                        ord.ProductCategoryID = product.ProductCategoryID;
+                        ord.Status = "Preparing";
+                        ord.OrderTableID = sender.tableId;
+
+                        data.orders.push(ord);
+                        data.tables[tableIndex].TableSessionPrice += product.ProductPrice;
+                        $scope.showDetailOfTable(tableId);
+                        $scope.bindResult(data);
+
+                        Swal.fire({
+                            position: "top-end",
+                            icon: "success",
+                            title: "Sipariş eklendi.",
+                            showConfirmButton: false,
+                            timer: 1500,
+                        });
+                    }
+
+                    if (err) {
+                        Swal.fire({
+                            title: "Bir hata ile karşılaşıldı.",
+                            text: JSON.stringify(err),
+                            icon: "error",
+                            confirmButtonText: "Cool",
+                        });
+                    }
+                });
+            };
+
+            $scope.sendPayment = () => {
+                if ($("#chash").prop("checked")) {
+                    window.emitVal = 1;
+                } else {
+                    window.emitVal = 0;
+                }
+                sender = {};
+                sender.option = "payment";
+                sender.tableId = parseInt(tableId);
+                sender.paymentType = window.emitVal;
+
+                index = data.tables.findIndex((item) => {
+                    return item.TableInfoID == tableId;
+                });
+
+                sender.sesion = data.tables[index].TableSessionId;
+                socket.emit("onlineOrder", sender, (err, res) => {
+                    let orders = [];
+                    data.orders.forEach((item, index) => {
+                        if (item.OrderTableID != tableId) {
+                            orders.push(item);
+                        }
+                    });
+                    data.orders = orders;
+
+                    data.tables[index].TableStatusName = "Kapalı";
+                    data.tables[index].TableStatusColor = "red";
+                    data.tables[index].TableSessionPrice = 0;
+                    $scope.bindResult(data);
+                });
+            };
+
+            $scope.notificationUpdate = (emitVal) => {
+                sender = {};
+                sender.option = "notificationUpdate";
+                sender.notId = emitVal;
+
+                const clientOffset = null; //= `${socket.id}-${counter++}`;
+                socket.emit("onlineOrder", sender, (err, res) => {
+                    if (err) {
+                        Swal.fire({
+                            title: "Bir hata ile karşılaşıldı.",
+                            text: JSON.stringify(err),
+                            icon: "error",
+                            confirmButtonText: "Cool",
+                        });
+                    }
+                    else{
+                        if ((res.status == "success")) {
+                            Swal.fire({
+                                position: "top-end",
+                                icon: "success",
+                                title: "Sipariş tamamlandı.",
+                                showConfirmButton: false,
+                                timer: 1500,
+                            });
+                            data.notification.forEach((item, index)=>{
+                                if(item.NotificationID === emitVal){
+                                    data.notification.splice(index,1);
+                                }
+                            })
+                            $scope.bindResult(data);
+                        }
+                    }
+                });
+            };
+
+            $scope.bindResult = function (msg) {
+                if (tableId) {
+                    $scope.showDetailOfTable(tableId);
+                }
+                $scope.notification = msg.notification;
+                $scope.tables = msg.tables;
+                $scope.categories = msg.categories;
+                $scope.$digest();
+            };
+
+            socket.on("onlineOrder", (msg, serverOffset) => {
+                if (msg != null) {
+                    if (msg.bc === true) {
+                        // GELEN MESAJLARIN İŞLENDİĞİ YER
+                        if (msg.option === "tables") {
+                            data.tables.forEach((item, index) => {
+                                if (item.TableInfoID === parseInt(msg.tableId)) {
+                                    data.tables[index].TableStatusName = msg.Status;
+                                    data.tables[index].TableStatusColor = msg.Color;
+                                    data.tables[index].TableSessionId = msg.scope;
+                                    data.tables[index].isReserved = 0;
+                                }
+                            });
+                        }
+
+                        if (msg.option === "orders") {
+                            let product = data.productList.find((item) => {
+                                return item.ProductID == msg.productId;
+                            });
+
+                            let prd = {};
+                            prd.OrderID = msg.scope;
+                            prd.ProductName = product.ProductName;
+                            prd.ProductPrice = product.ProductPrice;
+
+                            prd.Status = "Preparing";
+                            prd.OrderTableID = msg.tableId;
+                            data.tables.forEach((item) => {
+                                if (item.TableInfoID == parseInt(msg.tableId)) {
+                                    item.TableSessionPrice += product.ProductPrice;
+                                }
+                            });
+                            data.orders.push(prd);
+                        }
+
+                        if (msg.option === "removeOrder") {
+                            let indexOfOrder = data.orders.findIndex((item) => {
+                                return item.OrderID == msg.orderId;
+                            });
+                            let tableIndex = data.tables.findIndex((item) => {
+                                return item.TableInfoID == parseInt(msg.tableId);
+                            });
+
+                            data.tables[tableIndex].TableSessionPrice = 0;
+                            data.orders.splice(indexOfOrder, 1);
+                            data.orders.forEach((item) => {
+                                if (item.OrderTableID == parseInt(msg.tableId)) {
+                                    data.tables[tableIndex].TableSessionPrice += item.ProductPrice;
+                                }
+                            });
+                        }
+
+                        if (msg.option === "payment") {
+                            data.tables.forEach((item, index) => {
+                                if (item.TableInfoID === msg.tableId) {
+                                    data.tables[index].TableStatusName = "Kapalı";
+                                    data.tables[index].TableStatusColor = "red";
+                                    data.tables[index].TableSessionPrice = 0;
+                                }
+                            });
+
+                            let orders = [];
+                            data.orders.forEach((item, index) => {
+                                if (item.OrderTableID != msg.tableId) {
+                                    orders.push(item);
+                                }
+                            });
+                            data.orders = orders;
+                        }
+
+                        if (msg.option === "notification") {
+                            data.notification.push({ NotificationID: msg.notId, NotificationDescription: msg.notification });
+                        }
+
+                        if (msg.option === "notificationUpdate") {
+                            data.notification.forEach((item, index)=>{
+                                if(item.NotificationID === msg.notId){
+                                    data.notification.splice(index,1);
+                                }
+                            })
+                        }
+
+                        $scope.bindResult(data);
+                    } else {
+                        data = JSON.parse(msg);
+                        $scope.bindResult(data);
+                    }
+                }
+            });
+
+            let language; // Backend'den gelen dil parametresi (örneğin 'en' veya 'tr')
+
+            if (document.cookie.indexOf("languages") < 0) {
+                language = navigator.language || navigator.userLanguage
+            } else {
+                language = getCookie("languages")
+            }
+
+            function getCookie(cname) {
+                let name = cname + "=";
+                let decodedCookie = decodeURIComponent(document.cookie);
+                let ca = decodedCookie.split(';');
+                for (let i = 0; i < ca.length; i++) {
+                    let c = ca[i];
+                    while (c.charAt(0) == ' ') {
+                        c = c.substring(1);
+                    }
+                    if (c.indexOf(name) == 0) {
+                        return c.substring(name.length, c.length);
+                    }
+                }
+                return "";
+            }
+
+            function loadMenu(language) {
+                //var jsonFile = language === 'en' ? 'english.json' : 'turkish.json';
+
+                language = "../languages/" + language + ".json";
+                $http.get(language).then(function (response) {
+                    $scope.fields = response.data.fields;
+                    $scope.title = response.data.title;
+                });
+            }
+
+            loadMenu(language);
+
+        });
+
+        socket.on("error", (msg) => {
+            //bura
+            alert(msg);
+            window.location = "https://cafenux.scrart.com/logout";
+        });
+
+        $("#rezSave").on("click", () => {
+            sender = {};
+            sender.tableId = tableId;
+            sender.name = $("#name").val();
+            sender.phone = $("#phone").val();
+            sender.rezDate = $("#rezDate").html();
+            sender.rezTime = $("#rezTime").val();
+            const clientOffset = null; //= `${socket.id}-${counter++}`;
+            socket.emit("onlineOrder", sender, clientOffset);
+        });
+
+        [].forEach.call(document.querySelectorAll(".phone"), function (input) {
+            let keyCode;
+            function mask(event) {
+                event.keyCode && (keyCode = event.keyCode);
+                let pos = this.selectionStart;
+                if (pos < 3) event.preventDefault();
+                let matrix = "+90 (___) ___-__-__",
+                    i = 0,
+                    def = matrix.replace(/\D/g, ""),
+                    val = this.value.replace(/\D/g, ""),
+                    newValue = matrix.replace(/[_\d]/g, function (a) {
+                        return i < val.length ? val.charAt(i++) || def.charAt(i) : a;
+                    });
+                i = newValue.indexOf("_");
+                if (i != -1) {
+                    i < 5 && (i = 3);
+                    newValue = newValue.slice(0, i);
+                }
+                let reg = matrix
+                    .substr(0, this.value.length)
+                    .replace(/_+/g, function (a) {
+                        return "\\d{1," + a.length + "}";
+                    })
+                    .replace(/[+()]/g, "\\$&");
+                reg = new RegExp("^" + reg + "$");
+                if (!reg.test(this.value) || this.value.length < 5 || (keyCode > 47 && keyCode < 58)) this.value = newValue;
+                if (event.type == "blur" && this.value.length < 5) this.value = "";
+            }
+
+            input.addEventListener("input", mask, false);
+            input.addEventListener("focus", mask, false);
+            input.addEventListener("blur", mask, false);
+            input.addEventListener("keydown", mask, false);
+            input.addEventListener("mouseup", (event) => {
+                event.preventDefault();
+                if (input.value.length < 4) {
+                    input.setSelectionRange(4, 4);
+                } else {
+                    input.setSelectionRange(input.value.length, input.value.length);
+                }
+            });
+        });
+    
+        
+    </script>
+</body>
+
+</html>

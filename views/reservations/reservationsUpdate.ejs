@@ -1,0 +1,78 @@
+<div class="modal-lg" role="dialog">
+    <div class="modal-content">
+        <div class="mdl-head">
+            
+            <div class="close">
+                <button type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        </div>
+        <!-- Form -->
+        <form action="reservationsUpdatePost" method="post">
+            
+            <div class="modal-body">
+                <h5 class="ml-4 mb-4 p-1 modal-title">Update Reservation</h5>
+                <!-- Target ID Value to Update -->
+                <input class="d-none" type="text" name=".ID" value="<%= data.values.ReservationId %>" />
+
+                <!-- Values -->
+                <div class="container">
+                    <!-- data.values --> 
+                    <div class="row align-items-start">
+                        <!-- Sol Sütün isActive
+                            isCheff-->
+
+                        <div class="col-12">
+                            <div class="d-flex mb-3">
+                                <label class="col-4" for="ReservationName">Name:</label><br>
+                                <div class="w-100">
+                                    <input class="w-100 inpt" type="text" id="ReservationName" name="ReservationName" value="<%= data.values.ReservationName %>"><br>
+                                    <span class="bar"></span>
+                                </div>
+                            </div>
+                            <div class="d-flex mb-3">
+                                <label class="col-4" for="ReservationDate">Reservation Date:</label><br>
+                                <div class="w-100">
+                                    <input class="w-100 inpt" type="date" id="ReservationDate" name="ReservationDate" value="<%= sqlDate2ISODate(data.values.ReservationDate, true) %>"><br>
+                                    <span class="bar"></span>
+                                </div>
+                            </div>
+                            <div class="d-flex mb-3">
+
+                                <label class="col-4" for="ReservationTable">Reservation Table:</label><br>
+                                <div class="w-100">
+                                    <select class="w-100 inpt" aria-label="Select Table" id="ReservationTable" name="ReservationTable">
+                                
+                                        <% for (let i = 0; i < data.fkValues["ReservationTable"].length; i++) { %>
+                                            <option
+                                                value="<%= data.fkValues["ReservationTable"][i].value %>"
+                                                <%= data.fkValues["ReservationTable"][i].value === data.values.ReservationTable ? "selected" : "" %>
+                                            >
+                                                <%= data.fkValues["ReservationTable"][i].displayValue %>
+                                            </option>
+                                        <% } %>
+                                    </select><br>
+                                </div>
+                            </div>
+
+                            <div class="d-flex mb-3">
+                                <label class="col-4" for="ReservationPhone">Phone:</label><br>
+                                <div class="w-100">
+                                    <input class="w-100 inpt" type="text" id="ReservationPhone" name="ReservationPhone" value="<%= data.values.ReservationPhone %>"><br>
+                                    <span class="bar"></span>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <input type="button" value="Close" class="btn btn-secondary" data-dismiss="modal" />
+                <input type="submit" value="Submit" class="btn btn-success" />
+            </div>
+        </form>
+    </div>
+</div>

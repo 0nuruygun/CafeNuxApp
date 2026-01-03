@@ -1,0 +1,110 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en">
+<!--<![endif]-->
+
+<%- include(`${partials}/head`)%>
+
+<body ng-app="myApp" ng-controller="myCtrl">
+    <div id="loader">
+        <span class="loader"></span>
+    </div>
+    <%- include(`${partials}/nav`)%>
+
+    <!-- Left Panel -->
+
+    <!-- Right Panel -->
+
+    <div id="right-panel" class="right-panel">
+        <!-- Header-->
+        <%- include(`${partials}/header`)%>
+        <!-- Header-->
+
+        <div class="content mt-3">
+            <div class="animated fadeIn">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <strong class="card-title">{{ title.Suppliers }}</strong>
+                                <button type="button" class="btn btn-secondary mb-1 float-right" action="add">{{process.add}}</button>
+                            </div>
+                            <div class="card-body">
+                                <div class="row float-right">
+                                    <label for="myInput">
+                                        Search:
+                                        <input class="form-control d-inline mb-1 mr-4" style="width: auto;" type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for names.." title="Type in a name">
+                                    </label>
+                                    
+                                </div>
+                                <table id="example" class="table table-sortable" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th><span class="fa fa-key mx-2"></span>ID</th>
+                                            <th>{{fields.Name}}</th>
+                                            <th>{{fields.Phone}}</th>
+                                            <th>{{fields.Address}}</th>
+                                            <th>{{fields.IBAN}}</th>
+                                            <th>{{fields.Tax}}</th>
+                                            <th>{{fields.VDI}}</th>
+                                            <th>{{fields.AlertLimit}}</th>
+                                            <th>{{fields.CreatedDate}}</th>
+                                            <th>{{fields.OrderStatusID}}</th>
+                                            <th>{{fields.Action}}</th> 
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="list in listOfData" id="{{ list.SuppliersID }}">
+                                            <td>{{ list.SuppliersID }}</td>
+                                            <td>{{ list.SuppliersName }}</td>
+                                            <td>{{ list.SuppliersPhone }}</td>
+                                            <td>{{ list.SuppliersAddress }}</td>
+                                            <td>{{ list.SuppliersIBAN }}</td>
+                                            <td>{{ list.SuppliersTax }}</td>
+                                            <td>{{ list.SuppliersVDI }}</td>
+                                            <td>{{ list.SuppliersAlertLimit }}</td>
+                                            <td>{{ list.SuppliersCreatedDate }}</td>
+                                            <td>{{ list.SuppliersOrderStatusID }}</td>
+                                     
+                                            <td>
+                                                <div style="display: flex; justify-content: center">
+                                                    <button id="{{ list.SuppliersID }}" class="btn btn-outline-secondary" type="button" action="update">
+                                                        {{ process.update }}
+                                                    </button>
+                                                    <button id="{{ list.SuppliersID }}" class="btn btn-outline-secondary" type="button" action="delete">
+                                                        {{ process.delete }}
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- .animated -->
+        </div><!-- .content -->
+
+
+    </div><!-- /#right-panel -->
+    <div class="modal fade" id="largeModal" tabindex="-1" role="dialog" aria-labelledby="largeModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <!-- AJAX ile yüklenen içerik buraya gelecek -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Panel -->
+
+    <%- include(`${partials}/script`) %>
+
+
+</body>
+
+</html>

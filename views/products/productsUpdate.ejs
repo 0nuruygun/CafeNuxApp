@@ -1,0 +1,90 @@
+<div class="modal-lg" role="dialog">
+    <div class="modal-content">
+        <div class="mdl-head">
+            
+            <div class="close">
+                <button type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        </div>
+        <!-- Form -->
+        <form action="productsUpdatePost" method="post">
+            
+            <div class="modal-body">
+                <h5 class="ml-4 mb-4 p-1 modal-title">Update Products</h5>
+                <!-- Target ID Value to Update -->
+                <input class="d-none" type="text" name=".ID" value="<%= data.values.ProductID %>" />
+
+                <!-- Values -->
+                <div class="container">
+                    <!-- data.values --> 
+                    <div class="row align-items-start">
+                        <!-- Sol Sütün isActive
+                            isCheff-->
+
+                        <div class="col-12">
+                            <div class="d-flex mb-3">
+                                <label class="col-4" for="ProductName">Product Name:</label><br>
+                                <div class="w-100">
+                                    <input class="w-100 inpt" type="text" id="ProductName" name="ProductName" value="<%= data.values.ProductName %>"><br>
+                                    <span class="bar"></span>
+                                </div>
+                            </div>
+
+                            <div class="d-flex mb-3">
+                                <label class="col-4" for="ProductPrice">Product Price:</label><br>
+                                <div class="w-100">
+                                    <input class="w-100 inpt" type="number" id="ProductPrice" name="ProductPrice" value="<%= data.values.ProductPrice %>"><br>
+                                    <span class="bar"></span>
+                                </div>
+                            </div>
+
+                            <div class="d-flex mb-3">
+                                <label class="col-4" for="ProductDesc">Product Desc:</label><br>
+                                <div class="w-100">
+                                    <input class="w-100 inpt" type="text" id="ProductDesc" name="ProductDesc" value="<%= data.values.ProductDesc %>"><br>
+                                    <span class="bar"></span>
+                                </div>
+                            </div>
+
+                            <div class="d-flex mb-3">
+                                <label class="col-4" for="ProductStockQuantity">Product Stock:</label><br>
+                                <div class="w-100">
+                                    <input class="w-100 inpt" type="text" id="ProductStockQuantity" name="ProductStockQuantity" value="<%= data.values.ProductStockQuantity %>"><br>
+                                    <span class="bar"></span>
+                                </div>
+                            </div>
+                            <div class="d-flex mb-3">
+                                <label class="col-4" for="TableInfoStatusID">Category:</label><br>
+                                <select class="w-100 inpt" aria-label="Select category ID" id="ProductCategoryID" name="ProductCategoryID">
+                                    <% for (let i = 0; i < data.fkValues["ProductCategoryID"].length; i++) { %>
+                                        <option
+                                            value="<%= data.fkValues["ProductCategoryID"][i].value %>"
+                                            <%= data.fkValues["ProductCategoryID"][i].value === data.values.ProductCategoryID ? "selected" : "" %>
+                                        >
+                                            <%= data.fkValues["ProductCategoryID"][i].displayValue %>
+                                        </option>
+                                    <% } %>
+                                </select><br>
+                            </div>
+                    
+                            <div class="d-flex mb-3">
+                                <label class="col-4" for="isActive">Is Active:</label><br>
+                                <label class="chcont">
+                                    <input type="hidden" id="isActive" name="ProductIsActive"  value="<%= data.values.ProductIsActive %>"><br>
+                                    <span onclick="chBox('#isActive')" class="checkmark" style='background-color: <%= (data.values.ProductIsActive == true) ? "#2f98e3" : "#ccc" %> '></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <input type="button" value="Close" class="btn btn-secondary" data-dismiss="modal" />
+                <input type="submit" value="Submit" class="btn btn-success" />
+            </div>
+        </form>
+    </div>
+</div>

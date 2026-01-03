@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<%- include(`${partials}/head`)%>
+
+    <body ng-app="myApp" ng-controller="myCtrl" onload="showPage()">
+        <div id="loader">
+            <span class="loader"></span>
+        </div>
+        <%- include(`${partials}/nav`)%>
+        <!-- Right Panel -->
+
+        <div id="right-panel" class="right-panel" style="display: none;">
+            <!-- Header-->
+
+            <%- include(`${partials}/breadcrumbs`)%>
+
+            <div class="content mt-3">
+                <div class="animated fadeIn">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <strong class="card-title">{{title.Orders}}</strong>
+                                </div>
+                                <div class="card-body">
+                                    <table id="example" class="display responsive nowrap table table-sortable" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <td>ID</td>
+                                                <td>{{fields.product}}</td>
+                                                <td>{{fields.OrderStatusID}}</td>
+                                                <td>{{fields.Price}}</td>
+                                                <td></td>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+                                            <tr ng-if="list.OrderStatusID != 2" ng-repeat="list in orders">
+                                                <td>{{ list.OrderID }}</td>
+                                                <td>{{ list.ProductName }}</td>
+                                                <td>{{ list.OrderStatusID }}</td>
+                                                <td>{{ list.ProductPrice }}</td>
+                                                <td id="{{ list.OrderID }}"
+                                                    ng-click="sendnotification(this.list.OrderID)"
+                                                    style="text-align: center; cursor: pointer">
+                                                    <i class="fa fa-check-square"></i>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <%- include('partials/script2') %>
+            <script src="/socket.io/socket.io.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+   
+            <script>
+                const socket = io({
+                    auth: {
+                        serverOffset: 0,
+                    },
+                    ackTimeout: 10000,
+                    retries: 3,
+                    query: {
+                        sessionId: '<%= data %>' 
+                    }
+                });
+
+                var data = {};
+                var app = angular.module("myApp", []);
+                app.controller("myCtrl", function ($scope, $http) {
+
+                    $scope.bindResult = function (data) {
+                        $scope.orders = data.orders;
+                        $scope.$digest();
+                    };
+
+                    $scope.sendOrder = (emitValue) => {
+                        console.warn(`[$scope.sendOrder | TODO] : ${emitValue}`);
+                    };
+
+                    socket.on("onlineOrder", (msg, serverOffset) => {
+                        if (msg != null) {
+                            if (msg.bc === true) {
+                                if (msg.option === "orders") {
+                                    let product = data.productList.find((item) => {
+                                        return item.ProductID == msg.productId;
+                                    });
+
+                                    let prd = {};
+                                    prd.OrderID = msg.scope;
+                                    prd.ProductName = product.ProductName;
+                                    prd.ProductPrice = product.ProductPrice;
+
+                                    prd.Status = "Preparing";
+                                    prd.OrderTableID = msg.tableId;
+                                    data.tables.forEach((item) => {
+                                        if (item.TableInfoID == parseInt(msg.tableId)) {
+                                            item.TableSessionPrice += product.ProductPrice;
+                                        }
+                                    });
+                                    data.orders.push(prd);
+
+                                    $scope.bindResult(data);
+
+                                    Swal.fire({
+                                        position: "top-end",
+                                        icon: "success",
+                                        title: "Yeni Sipariş alındı",
+                                        showConfirmButton: false,
+                                        timer: 1500,
+                                    });
+                                }
+
+                                if (msg.option === "removeOrder") {
+                                    let indexOfOrder = data.orders.findIndex((item) => {
+                                        return item.OrderID == msg.orderId;
+                                    });
+                                    let tableIndex = data.tables.findIndex((item) => {
+                                        return item.TableInfoID == parseInt(msg.tableId);
+                                    });
+
+                                    let txt =
+                                        data.tables[tableIndex].TableInfoName +
+                                        " masasına ait " +
+                                        data.orders[indexOfOrder].OrderID +
+                                        " numaralı " +
+                                        data.orders[indexOfOrder].ProductName +
+                                        " isimli sipaiş iptal edildi";
+
+                                    data.tables[tableIndex].TableSessionPrice = 0;
+                                    data.orders.splice(indexOfOrder, 1);
+                                    data.orders.forEach((item) => {
+                                        if (item.OrderTableID == parseInt(msg.tableId)) {
+                                            data.tables[tableIndex].TableSessionPrice += item.ProductPrice;
+                                        }
+                                    });
+
+                                    Swal.fire({
+                                        title: "Sipariş İptali",
+                                        position: "top-end",
+                                        text: txt,
+                                        icon: "warning",
+                                        showConfirmButton: false,
+                                        timer: 1500,
+                                        showCancelButton: false,
+                                    });
+
+                                    $scope.bindResult(data);
+                                }
+                            } else {
+                                data = JSON.parse(msg);
+                                $scope.bindResult(data);
+                            }
+                        }
+                    });
+
+                    $scope.sendnotification = (orderId) => {
+
+                        Swal.fire({
+                            title: "Sipariş tamamlandı mı?",
+                            showDenyButton: true,
+                            showCancelButton: false,
+                            confirmButtonText: "Gönder",
+                            denyButtonText: `Vazgeç`,
+                        }).then((result) => {
+                            /* Read more about isConfirmed, isDenied below */
+
+                            if (result.isConfirmed) {
+
+
+                                let indexOfOrder = data.orders.findIndex((item) => {
+                                    return item.OrderID == orderId;
+                                });
+
+                                let table = data.tables.filter((item) => {
+                                    console.log(item.TableInfoID +"   "+ data.orders[indexOfOrder].OrderTableID)
+                                    if (item.TableInfoID == data.orders[indexOfOrder].OrderTableID) {
+                                        return item;
+                                    }
+
+                                });
+
+                                sender = {};
+                                sender.option = "notification";
+                                sender.tableId = parseInt(table[0].TableInfoID);
+                                sender.tableName = table[0].TableInfoName;
+                                sender.orderId = orderId;
+                                sender.productName = data.orders[indexOfOrder].ProductName;
+                                const clientOffset = ""; //= `${socket.id}-${counter++}`;
+
+                                //Sipariş ile ilgili tüm dinlemeler için onlineorder
+                                socket.emit("onlineOrder", sender, (err, res) => {
+                                    if ((res.status == "success")) {
+                                        data.orders[indexOfOrder].OrderStatusID = 2
+                                        $scope.bindResult(data);
+
+                                        Swal.fire({
+                                            position: "top-end",
+                                            icon: "success",
+                                            title: "Sipariş hazırlandı.",
+                                            showConfirmButton: false,
+                                            timer: 1500,
+                                        });
+                                    }
+
+                                    if (err) {
+                                        Swal.fire({
+                                            title: "Error!",
+                                            text: "Bir hata ile karşılaşıldı.",
+                                            icon: "error",
+                                            confirmButtonText: "Cool",
+                                        });
+                                    }
+                                });
+                            } else if (result.isDenied) {
+                                Swal.fire("Değişiklik yapılmadı.", "", "info");
+                            }
+                        });
+                    };
+
+                    let language; // Backend'den gelen dil parametresi (örneğin 'en' veya 'tr')
+
+                    if (document.cookie.indexOf("languages") < 0) {
+                        language = navigator.language || navigator.userLanguage
+                    } else {
+                        language = getCookie("languages")
+                    }
+
+                    function getCookie(cname) {
+                        let name = cname + "=";
+                        let decodedCookie = decodeURIComponent(document.cookie);
+                        let ca = decodedCookie.split(';');
+                        for (let i = 0; i < ca.length; i++) {
+                            let c = ca[i];
+                            while (c.charAt(0) == ' ') {
+                                c = c.substring(1);
+                            }
+                            if (c.indexOf(name) == 0) {
+                                return c.substring(name.length, c.length);
+                            }
+                        }
+                        return "";
+                    }
+
+                    function loadMenu(language) {
+                        //var jsonFile = language === 'en' ? 'english.json' : 'turkish.json';
+
+                        language = "../languages/" + language + ".json";
+                        $http.get(language).then(function (response) {
+                            $scope.fields = response.data.fields;
+                            $scope.title = response.data.title;
+                        });
+                    }
+
+                    loadMenu(language);
+
+                });
+            </script>
+    </body>
+
+</html>

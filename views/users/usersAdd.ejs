@@ -1,0 +1,88 @@
+<div class="modal-lg" role="dialog">
+    <div class="modal-content">
+        <div class="mdl-head">
+            
+            <div class="close">
+                <button type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        </div>
+        <!-- Form -->
+        <form action="usersAddPost" method="post">
+            
+            <div class="modal-body">
+                <h5 class="ml-4 mb-4 p-1 modal-title">Add Users</h5>
+                <!-- Values -->
+                <div class="container">
+                    <!-- data.values --> 
+                    <div class="row align-items-start">
+                        <!-- Sol Sütün isActive
+                            isCheff-->
+
+                        <div class="col-12">
+                            <div class="d-flex mb-3">
+                                <label class="col-4" for="tc">Tc:</label><br>
+                                <div class="w-100">
+                                    <input class="w-100 inpt" type="text" id="tc" name="tc"><br>
+                                    <span class="bar"></span>
+                                </div>
+                            </div>
+
+                            <div class="d-flex mb-3">
+                                <label class="col-4" for="lastname">Name:</label><br>
+                                <div class="w-100">
+                                    <input class="w-100 inpt" type="text" id="name" name="name"><br>
+                                    <span class="bar"></span>
+                                </div>
+                            </div>
+                            <div class="d-flex mb-3">
+                                <label class="col-4" for="lastname">Lastname:</label><br>
+                                <div class="w-100">
+                                    <input class="w-100 inpt" type="text" id="lastname" name="lastname"><br>
+                                    <span class="bar"></span>
+                                </div>
+                            </div>
+                            <div class="d-flex mb-3">
+
+                                <label class="col-4" for="email">Email:</label><br>
+                                <div class="w-100">
+                                    <input class="w-100 inpt" type="text" id="email" name="email"><br>
+                                    <span class="bar"></span>
+                                </div>
+                            </div>
+                            <div class="d-flex mb-3">
+                                <label class="col-4" for="phone">Phone:</label><br>
+                                <div class="w-100">
+                                    <input class="w-100 inpt" type="text" id="phone" name="phone"><br>
+                                    <span class="bar"></span>
+                                </div>
+                            </div>
+                            <div class="d-flex mb-3">
+                                <label class="col-4" for="address">Password:</label><br>
+                                <div class="w-100">
+                                    <input class="w-100 inpt" type="password" id="password" name="password"><br>
+                                    <span class="bar"></span>
+                                </div>
+                            </div>
+                     
+                            <div class="d-flex mb-3">
+                                <label class="col-4" for="isActive">Is Active:</label><br>
+                                <label class="chcont">
+                                    <input type="hidden" id="isActive" name="isActive"  value="true"><br>
+                                    <span onclick="chBox('#isActive')" class="checkmark" style='background-color: #2f98e3'></span>
+                                </label>
+                            </div>
+                     
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <input type="button" value="Close" class="btn btn-secondary" data-dismiss="modal" />
+                <input type="submit" value="Submit" class="btn btn-success" />
+            </div>
+        </form>
+    </div>
+</div>

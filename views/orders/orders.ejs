@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+
+<%- include(`${partials}/head`)%>
+
+    <body ng-app="myApp" ng-controller="myCtrl" onload="showPage()">
+        <div id="loader">
+            <span class="loader"></span>
+        </div>
+        <%- include(`${partials}/nav`)%>
+
+            <!-- Right Panel -->
+
+            <div id="right-panel" class="right-panel">
+                <!-- Header-->
+                <%- include(`${partials}/header`)%>
+
+                    <div class="content mt-3">
+                        <div class="animated fadeIn">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <strong class="card-title">{{title.Orders}}</strong>
+                                            
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row float-right">
+                                                <label for="myInput">
+                                                    Search:
+                                                    <input class="form-control d-inline mb-1 mr-4" style="width: auto;" type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for names.." title="Type in a name">
+                                                </label>
+                                                
+                                            </div>
+                                            <table id="example" class="table table-sortable" style="width:100%">
+                                                <thead>
+                                                    <tr>
+                                                        <th><span class="fa fa-key mx-2"></span>ID</th>
+                                                        <th>{{fields.Date}}</th>
+                                                        <th>{{fields.TableID}}</th>
+                                                        <th>{{fields.TableSessionID}}</th>
+                                                        <th>{{fields.UsersID}}</th>
+                                                        <th>{{fields.StatusID}}</th>
+                                                        <th>{{fields.ProductID}}</th>
+                                                        <th>{{fields.Action}}</th>
+                                                    </tr>
+                                                </thead>
+
+                                                <tbody>
+                                                    <tr ng-repeat="list in listOfData">
+                                                        <td>{{ list.OrderID }}</td>
+                                                        <td>{{ list.OrderDate }}</td>
+                                                        <td>{{ list.OrderTableID }}</td>
+                                                        <td>{{ list.OrderTableSessionID }}</td>
+                                                        <td>{{ list.OrderUsersID }}</td>
+                                                        <td>{{ list.OrderStatusID }}</td>
+                                                        <td>{{ list.OrderProductID }}</td>
+                                                 
+                                                        <td>
+                                                            <div style="display: flex; justify-content: center">
+                                                                <button id="{{ list.OrderID }}" class="btn btn-outline-secondary" type="button" action="update">
+                                                                    {{ process.update }}
+                                                                </button>
+                                                                <button id="{{ list.OrderID }}" class="btn btn-outline-secondary" type="button" action="delete">
+                                                                    {{ process.delete }}
+                                                                </button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+            <div class="modal fade" id="largeModal" tabindex="-1" role="dialog" aria-labelledby="largeModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <!-- AJAX ile yüklenen içerik buraya gelecek -->
+                    </div>
+                </div>
+            </div>
+        
+            <!-- Right Panel -->
+
+            <%- include(`${partials}/script`) %>
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+    </body>
+
+</html>
