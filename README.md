@@ -45,3 +45,4 @@ $ # --------
 * [ ] Plan out a source generator (dynamically generate add/update/delete forms from code, cache the results. use JSDOM? or any XML parser for that matter, use partial modules)
 * [ ] Add more complex table interactions (i.e refer a significant table value for the select fields, maybe create a foreign key table previewer inside &lt;select&gt;)
 * * [ ] A userscript table unit test (or maybe JSDOM/selenium?)
+# CafeNuX
